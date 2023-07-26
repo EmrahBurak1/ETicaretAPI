@@ -21,5 +21,5 @@ namespace ETicaretAPI.API.Controllers
             var products = _productService.GetProduct();
             return Ok(products);
         }
-    }
+    } 
 }
