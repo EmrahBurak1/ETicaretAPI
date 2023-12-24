@@ -9,6 +9,7 @@ namespace ETicaretAPI.Domain.Entities
 {
     public class Customer : BaseEntity
     {
+        public string Name { get; set; }
         //Customer içerisinde 1'e çok ilişki var yani bir customer'ın birden fazla order'ı olabilir. Fakat bir order'ın birden fazla customer'ı olamaz. Entityler arasındaki ilişki görselinde daha açıklayıcı.
         public ICollection<Order> Orders { get; set; }
     }
