@@ -23,14 +23,15 @@ namespace ETicaretAPI.Persistence
 
             //Buraya eklediğimiz her şey IOC container'a eklenmiş oluyor. Çünkü bu methodu program.cs içerisinde çağırıyoruz.
             //Aşağıda addcontext ile hangi veritabanına migrate edeceksek options ile onu seçmeliyiz. Yani mssql kullanıyorsak usemssql, plsql kullanıyorsak useolsql gibi seçenekler çıkması lazım biz postgresql kullanacağımız için persistence katmanına sağ tıklayıp nudget package'i açıp postgresql yazarak ef core postgresql kütüphanesini yüklüyoruz bunu da using ile projeye dahil ediyoruz.Postgresql'in ismi UseNpgsql budur.
-            services.AddDbContext<ETicaretAPIDbContext>(options => options.UseNpgsql(Configuration.ConnectionString) , ServiceLifetime.Singleton); //Use ile postgresql seçildikten sonra bizden connection string istiyor. Onu da internetten yazarak buluyoruz.Connecsiton string sitesine girip postgresql seçilerek postgresql'e uygun connection stringi alabiliriz. ETicaretAPIDb database ismi db ye hangi isimle kaydedileceğini belirler. Yani ETicaretAPIDb database'i oluşturacak. ServiceLifetime.Singleton'ı sonradan ekledik bunun amacı uygulamaya ait bir tane dbcontext oluşturmasını talep ediyoruz. Bunu yazmazsak controller içerisindeki constructorda birden fazla parametre verirsek swegger da patlıyor. 
+            //Not: Scoped da her request için oluşturulan nesne iş bittikten sonra imha/dispose edilir.
+            services.AddDbContext<ETicaretAPIDbContext>(options => options.UseNpgsql(Configuration.ConnectionString)); //Use ile postgresql seçildikten sonra bizden connection string istiyor. Onu da internetten yazarak buluyoruz.Connecsiton string sitesine girip postgresql seçilerek postgresql'e uygun connection stringi alabiliriz. ETicaretAPIDb database ismi db ye hangi isimle kaydedileceğini belirler. Yani ETicaretAPIDb database'i oluşturacak. ServiceLifetime.Singleton'ı sonradan ekledik bunun amacı uygulamaya ait bir tane dbcontext oluşturmasını talep ediyoruz. Bunu yazmazsak controller içerisindeki constructorda birden fazla parametre verirsek swegger da patlıyor. Not: Sonradan daha düzgün bir yapıya çevirebilmek için daha doğrusu alternatif olarak AddScoped özelliği ile devam ettik. Ayrıca yazdığımız Servicelifetime.singleton kaldırıldı.
 
-            services.AddSingleton<ICustomerReadRepository, CustomerReadRepository>(); //Artık repository servislerimizi IOC Container'a eklememiz gerekiyor. Onu da bu şekilde yapabiliyoruz. Bunun anlamı ICustomerReadRepository istendiğinde biz CustomerReadRepository'yi döneceğiz.
-            services.AddSingleton<ICustomerWriteRepository, CustomerWriteRepository>();
-            services.AddSingleton<IOrderReadRepository, OrderReadRepository>();
-            services.AddSingleton<IOrderWriteRepository, OrderWriteRepository>();
-            services.AddSingleton<IProductReadRepository, ProductReadRepository>();
-            services.AddSingleton<IProductWriteRepository, ProductWriteRepository>();
+            services.AddScoped<ICustomerReadRepository, CustomerReadRepository>(); //Artık repository servislerimizi IOC Container'a eklememiz gerekiyor. Onu da bu şekilde yapabiliyoruz. Bunun anlamı ICustomerReadRepository istendiğinde biz CustomerReadRepository'yi döneceğiz.
+            services.AddScoped<ICustomerWriteRepository, CustomerWriteRepository>();
+            services.AddScoped<IOrderReadRepository, OrderReadRepository>();
+            services.AddScoped<IOrderWriteRepository, OrderWriteRepository>();
+            services.AddScoped<IProductReadRepository, ProductReadRepository>();
+            services.AddScoped<IProductWriteRepository, ProductWriteRepository>();
 
         }
     }

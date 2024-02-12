@@ -1,5 +1,6 @@
 ﻿using ETicaretAPI.Application.Abstraction;
 using ETicaretAPI.Application.Repositories;
+using ETicaretAPI.Domain.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -35,7 +36,7 @@ namespace ETicaretAPI.API.Controllers
         }
 
         [HttpGet]
-        public async void Get()
+        public async Task Get() //Buraya Task yazmamızın sebebi ServiceRegistration.cs içerisinde AddScoped ile tanımlama yapmış olmamızdan kaynaklı. Task ile ilgili repository beklenecek ve sonraki method tetiklenirken context nesnesi dispose edilmeden ilgili işlemler yapılmış olacak. Eğer buraya task yazmazsak void olarak bırakırsak bu sefer swagger ile api tetiklendiğinde kodda dispose hatası ile karşılaşıyoruz. Yani controller void dönüş tipindeyken repository beklemiyor o yüzden ekleme işlemi yapmadan repositoryi dispose ediyor.
         {
             await _productWriteRepository.AddRangeAsync(new()
             {
@@ -45,6 +46,13 @@ namespace ETicaretAPI.API.Controllers
 
             });
             var count = await _productWriteRepository.SaveAsync();
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> Get(string id)
+        {
+            Product product = await _productReadRepository.GetByIdAsync(id);
+            return Ok(product);
         }
     }
 }

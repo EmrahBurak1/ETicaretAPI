@@ -33,6 +33,8 @@ namespace ETicaretAPI.Persistence.Repositories
             => await Table.FirstOrDefaultAsync(method); //FirstorDefault Async olanı seçiyoruz bu sayede asenkron çalışmış oluyor. İçerisine method yazmamız yeterli. Ayrıca bize T döndürdüğünden dolayı başına da await ve yukarısına da async yazmamız gerekiyor. Burada asenkron olarak veri bekleniyor yani await ile bekliyor daha sonra veri geldiğinde T türünde veri döndürüyor. 
 
         public async Task<T> GetByIdAsync(string id) //Generic yapılanmalardsa id gibi değersel çalışmak istiyorsak o değeri temsil eden bir arayüz veya sınıf tasarlamamız gerekiyor. Biz bunu BaseEntity içerisinde yapabiliriz. Buna işaretleyici (marker) pattern denir. Bunun içinde IReporsitory interfase'ine gitip bu interface'i class yerine baseentity'den türeyecek şekilde yazarız. Sonuçta baseentity de bir class. Aynı işlemler IRead ve IWrite repository'ye de yapılır.
-            => await Table.FirstOrDefaultAsync(data => data.Id == Guid.Parse(id)); //Burada artık baseentity den türediği için içinde id barındırmak zorunda ve burada o id yi kullanabiliyoruz. Data yerine herhangi bir şey yazabiliriz bizim o andaki verimizi temsil eder. Daha sonra string olan id mizi guid'e çevirip kullanabiliyoruz.   
-    }
+            //=> await Table.FirstOrDefaultAsync(data => data.Id == Guid.Parse(id)); //Burada artık baseentity den türediği için içinde id barındırmak zorunda ve burada o id yi kullanabiliyoruz. Data yerine herhangi bir şey yazabiliriz bizim o andaki verimizi temsil eder. Daha sonra string olan id mizi guid'e çevirip kullanabiliyoruz.  Kullanıdığımızda orm find methodunu desteklemiyorsa marker design pattern'ı kullanılabilir. Ama bizim ef find methodunu desteklediği için aşağıda buna uygun yapıyı kullanacağız. 
+            => await Table.FindAsync(Guid.Parse(id)); //Methodda id yi string olarak veriyoruz fakat burada da Guid.Parse ile convert etmemiz gerekiyor yoksa hata verir.
+
+     }
 }
