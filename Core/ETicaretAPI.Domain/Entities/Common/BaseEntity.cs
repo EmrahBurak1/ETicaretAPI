@@ -11,5 +11,7 @@ namespace ETicaretAPI.Domain.Entities.Common
         public Guid Id { get; set; } //Id yi guid veri tipinde tanımayabiliriz. Bu unique identify anlamına geliyor. Int olarakta kalabilir.
 
         public DateTime CreatedDate { get; set; }
+
+        public DateTime UpdatedDate { get; set; }
     }
 }

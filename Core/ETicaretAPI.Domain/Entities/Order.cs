@@ -9,7 +9,7 @@ namespace ETicaretAPI.Domain.Entities
 {
     public class Order :BaseEntity
     {
-        public int CustomerId { get; set; } //Bu yapılanmada aşağıdaki customer'a ait bir Id kolonu koyulabilir. Eğer koyulmazsa Entityframework kendisi otomatik olarak koyar. Kendimiz yönetmek istiyorsak bu şekilde yazabiliriz. Bunun anlamı customer ile ilişkilendirmek için bir id kolonu gerekmesinden kaynaklı.
+        public Guid CustomerId { get; set; } //Bu yapılanmada aşağıdaki customer'a ait bir Id kolonu koyulabilir. Eğer koyulmazsa Entityframework kendisi otomatik olarak koyar. Kendimiz yönetmek istiyorsak bu şekilde yazabiliriz. Bunun anlamı customer ile ilişkilendirmek için bir id kolonu gerekmesinden kaynaklı.
         public string Description { get; set; }
         public string Address { get; set; }
         public ICollection<Product> Products { get; set; } //Order ile product arasında çoka çok ilişki var yani örneğin iki ayrı ürünü aynı anda sipariş verebiliyoruz. Birden fazla ürün tek siparişte olabiliyor. Tam tersi durumda da benzer ürünleri başkaları da verebilir yani bir ürün birden fazla siparişte bulunabiliyor. Bu nedenle aralarında çoka çok ilişki var diyebiliriz.

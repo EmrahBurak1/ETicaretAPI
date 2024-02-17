@@ -1,4 +1,5 @@
 ﻿using ETicaretAPI.Domain.Entities;
+using ETicaretAPI.Domain.Entities.Common;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -23,5 +24,24 @@ namespace ETicaretAPI.Persistence.Contexts
         public Microsoft.EntityFrameworkCore.DbSet<Order> Orders { get; set; }
         public Microsoft.EntityFrameworkCore.DbSet<Customer> Customers { get; set; }
 
+        //Productcontroller içerisinde detayları yazan intercepter ile bir işin başlangıç ve bitiş süresiinin arasına girerek otomatik doldurulması gereken alanlar varsa bunları doldurabiliyoruz. Örneğin createdate veya updatedate gibi.
+        //Her savechanges tetiklendiğinde insert ve update edilen tüm datalara erişim üzerinlerinde istediğimiz değişiklikleri yapabiliyoruz.
+        public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        {
+            //Yapılan değişiklikle changetracker nesnesi ile yakalanabilir.Entityler üzerinden yapılan değişikliklerin ya da yeni eklenen verilerin yakalanmasını sağlayan propertylerdir. Update operasyonlarında track edilen verileri yakalayıp elde etmemizi sağlar.
+            var datas = ChangeTracker.Entries<BaseEntity>(); //Entries içerisine yazılan baseentity ile tüm entitylere erişebiliyoruz.
+
+            foreach (var data in datas)
+            {
+               _ = data.State switch //Not: Discard yapılanmasıyla bu şekilde _ koyarak herhangi bir atama yapılmamasını isteyebiliyoruz. Çünkü ihtiyacımız yok. Return ile herhangi bir değer döndürmemize gerek yok.
+                {
+                    EntityState.Added => data.Entity.CreatedDate = DateTime.UtcNow, //Örneğin entitymizde bir ekleme işlemi yapıldıysa burada kontrol edebiliyoruz
+                    EntityState.Modified => data.Entity.UpdatedDate = DateTime.UtcNow //Eğer update işlemi yapıldıysa burada kontrol ediyoruz.
+                };
+            }
+            
+            
+            return await base.SaveChangesAsync(cancellationToken);
+        }
     }
 }
